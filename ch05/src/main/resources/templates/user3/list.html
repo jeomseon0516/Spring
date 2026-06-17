@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>user3::목록</title>
+	</head>
+	<body>
+		<h3>User3 목록</h3>
+		<a th:href="@{/}">메인</a>
+		<a th:href="@{/user3/register}">등록</a>
+		<table border="1">
+			<tr>
+				<td>아이디</td>
+				<td>이름</td>
+				<td>생일</td>
+				<td>휴대폰</td>
+				<td>주소</td>
+				<td>관리</td>
+			</tr>
+				<tr th:each="dto:${dtoList}">
+					<!-- 표현언어에서는 객체 속성을 직접 참조가능 -->
+					<td>[[${dto.userid}]]</td>
+					<td>[[${dto.name}]]</td>
+					<td th:text="${dto.birth}">생일</td>
+					<td th:text="${dto.hp}">휴대폰</td>
+					<td th:text="${dto.addr}">주소</td>
+					<td>
+						<a th:href="@{/user3/modify(userid=${dto.userid})}">수정</a>
+						<a th:href="@{/user3/remove(userid=${dto.userid})}">삭제</a>
+					</td>
+				</tr>
+		</table>
+	</body>
+</html>
