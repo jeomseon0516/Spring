@@ -1,0 +1,37 @@
+package org.example.ch04.service;
+
+import lombok.RequiredArgsConstructor;
+import org.example.ch04.dao.User4DAO;
+import org.example.ch04.dto.User4DTO;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+@Service
+public class User4Service {
+
+    // 주입 대상 속성에 final 선언해서 RequiredArgsConstructor으로 객체 주입
+    private final User4DAO dao;
+
+    // DAO 호출 메서드
+    public void register(User4DTO user4DTO) {
+        dao.insert(user4DTO);
+    }
+
+    public User4DTO getById(String userid) {
+        return dao.select(userid);
+    }
+
+    public List<User4DTO> getAll() {
+        return dao.selectAll();
+    }
+
+    public void modify(User4DTO user4DTO) {
+        dao.update(user4DTO);
+    }
+
+    public void remove(String userid) {
+        dao.delete(userid);
+    }
+}
