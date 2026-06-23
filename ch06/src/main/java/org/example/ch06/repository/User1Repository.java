@@ -47,6 +47,6 @@ public interface User1Repository extends JpaRepository<User1, String> {
     @Query("SELECT u FROM User1 AS u WHERE u.name = :name")
     public List<User1> selectByName(String name);
 
-    @Query("SELECT new org.example.ch06.dto.User1DTO(u.userid, u.name, null, u.age) FROM User1 AS u WHERE u.userid = :userid")
-    public User1DTO selectByUserid(String userid);
+    @Query("SELECT u.userid, u.name, u.age FROM User1 AS u WHERE u.userid = :userid")
+    public List<Object[]> selectByUserid(String userid);
 }

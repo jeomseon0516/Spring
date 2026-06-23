@@ -164,7 +164,7 @@ class User1RepositoryTest {
 
     @Test
     public void selectByUserid() {
-        User1DTO dto = repository.selectByUserid("A102");
-        log.info(dto);
+        List<Object[]> objectsList = repository.selectByUserid("A102");
+        objectsList.forEach(objects -> log.info(Arrays.toString(objects)));
     }
 }
