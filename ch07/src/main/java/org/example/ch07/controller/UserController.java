@@ -1,13 +1,20 @@
 package org.example.ch07.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.example.ch07.dto.UserDTO;
+import org.example.ch07.entity.User;
+import org.example.ch07.security.MyUserDetails;
 import org.example.ch07.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+@Log4j2
 @Controller
 @RequiredArgsConstructor
 public class UserController {
@@ -33,5 +40,19 @@ public class UserController {
         UserDTO savedUser = userService.register(dto);
 
         return "redirect:/user/login?register=success";
+    }
+
+    @GetMapping("/user/info")
+    public String info(Model model) {
+
+        // 시큐리티 사용자 인증 객체
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info(authentication);
+
+        MyUserDetails myUserDetails = (MyUserDetails)authentication.getPrincipal();
+        User user = myUserDetails.getUser();
+
+        model.addAttribute("user", user);
+        return "/user/info";
     }
 }
