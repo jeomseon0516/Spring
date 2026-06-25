@@ -1,0 +1,16 @@
+package org.example.ch09.controller;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MemberController {
+
+    @PreAuthorize("hasAnyRole('MEMBER', 'ADMIN', 'MANAGER')")
+    @GetMapping("/member/index")
+    public String index() {
+
+        return "/member/index";
+    }
+}
