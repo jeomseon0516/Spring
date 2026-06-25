@@ -78,7 +78,7 @@ public class JwtProvider {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-            
+
         } catch(ExpiredJwtException e) {
             throw new RuntimeException("토근이 만료되었습니다.");
         } catch(SignatureException e) {
