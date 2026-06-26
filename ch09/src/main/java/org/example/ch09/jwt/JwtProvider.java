@@ -7,7 +7,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.example.ch09.entity.User;
+import org.example.ch09.security.MyUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,13 +19,14 @@ import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.Date;
 
+@Log4j2
 @Getter
 @Component
 public class JwtProvider {
     private String issuer;
     private SecretKey secret;
 
-    // application.yml 파일 설정값을 ㅗ초기화
+    // application.yml 파일 설정값으로 초기화
     public JwtProvider(@Value("${jwt.issuer}") String issuer,
                        @Value("${jwt.secret}") String secret) {
         this.issuer = issuer;
@@ -68,7 +71,11 @@ public class JwtProvider {
             .role(role)
             .build();
 
-        return new UsernamePasswordAuthenticationToken(user, token);
+        MyUserDetails details = MyUserDetails.builder()
+            .user(user)
+            .build();
+
+        return new UsernamePasswordAuthenticationToken(details, token, details.getAuthorities());
     }
 
     public void validateToken(String token) {

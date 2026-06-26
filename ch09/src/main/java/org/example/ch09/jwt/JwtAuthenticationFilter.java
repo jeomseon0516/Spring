@@ -21,25 +21,26 @@ import java.util.Arrays;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
-    private static final String COOKIE_NAME = "AUTH-COOKIE";
+    private static final String COOKIE_NAME = "AUTH-TOKEN";
     private static final String TOKEN_PREFIX = "Bearer";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("JwtAuthenticationFilter...1");
 
+        Cookie[] cookies = request.getCookies();
         // 토큰 추출
-        String token = Arrays.stream(request.getCookies())
+        String token = cookies != null ? Arrays.stream(request.getCookies())
             .filter(cookie -> COOKIE_NAME.equals(cookie.getName()))
             .findFirst()
             .map(Cookie::getValue)
-            .orElse(null);
+            .orElse(null) : null;
 
         log.info("token: " + token);
 
         // 토큰 검증
         try {
-            if (token != null) {
+            if (token != null && !token.isBlank()) {
                 jwtProvider.validateToken(token);
 
                 // 시큐리티 인증 처리
