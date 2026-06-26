@@ -1,5 +1,8 @@
 package org.example.ch09.security;
 
+import lombok.RequiredArgsConstructor;
+import org.example.ch09.jwt.JwtAuthenticationFilter;
+import org.example.ch09.jwt.JwtProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -11,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /*
     스프링 시큐리티 설정 클래스
@@ -18,9 +22,12 @@ import org.springframework.security.web.SecurityFilterChain;
      - 기타 시큐리티 설정
 */
 
+@RequiredArgsConstructor
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
+
+    private final JwtProvider jwtProvider;;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -30,8 +37,10 @@ public class SecurityConfig {
             .csrf(CsrfConfigurer::disable)
             .httpBasic(HttpBasicConfigurer::disable)
             .formLogin(FormLoginConfigurer::disable)
-            .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+            // 토큰 검사 필터 등록
+            .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
         // 인가 설정
 /*
         httpSecurity.authorizeHttpRequests( authorize -> authorize

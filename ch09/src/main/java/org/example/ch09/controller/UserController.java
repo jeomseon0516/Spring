@@ -3,56 +3,32 @@ package org.example.ch09.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.ch09.dto.UserDTO;
-import org.example.ch09.entity.User;
-import org.example.ch09.security.MyUserDetails;
 import org.example.ch09.service.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Log4j2
-@Controller
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService service;
 
-    @GetMapping("/user/login")
-    public String login() {
-        return "/user/login";
+    @PostMapping
+    public ResponseEntity<UserDTO> register(@RequestBody UserDTO dto) {
+        log.info(dto);
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(service.register(dto));
     }
 
-    @GetMapping("/user/register")
-    public String register() {
-        return "/user/register";
-    }
-
-    @PostMapping("/user/register")
-    public String register(UserDTO dto) {
-        System.out.println(dto);
-        String encoded = passwordEncoder.encode(dto.getPass());
-        dto.setPass(encoded);
-        UserDTO savedUser = userService.register(dto);
-
-        return "redirect:/user/login?register=success";
-    }
-
-    @GetMapping("/user/info")
-    public String info(Model model) {
-
-        // 시큐리티 사용자 인증 객체
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info(authentication);
-
-        MyUserDetails myUserDetails = (MyUserDetails)authentication.getPrincipal();
-        User user = myUserDetails.getUser();
-
-        model.addAttribute("user", user);
-        return "/user/info";
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> list() {
+        return ResponseEntity.ok(service.getUserAll());
     }
 }
